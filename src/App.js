@@ -8,7 +8,6 @@ const TEXT = "#F0F0F0";
 const SUBTEXT = "#888";
 const ORANGE = "#F58426";
 const API_KEY = process.env.REACT_APP_API_KEY;
-const SNEAKERS_KEY = process.env.REACT_APP_SNEAKERS_KEY;
 
 function parseJSON(text) {
   try {
