@@ -136,7 +136,7 @@ export default function App() {
     };
     img.src = e.target.result;
   };
-  reader.readAsDataURL(file);
+  reader.readAtoDataURL(file);
 }, []);
 
   const handleDrop = (e) => {
