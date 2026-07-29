@@ -8,6 +8,7 @@ const TEXT = "#F0F0F0";
 const SUBTEXT = "#888";
 const ORANGE = "#F58426";
 const API_KEY = process.env.REACT_APP_API_KEY;
+const SNEAKERS_KEY = process.env.REACT_APP_SNEAKERS_KEY;
 
 function parseJSON(text) {
   try {
@@ -114,30 +115,34 @@ export default function App() {
     if (tab === "drops" && drops.length === 0) fetchDrops();
   }, [tab, drops.length, fetchDrops]);
 
- const handleFile = useCallback((file) => {
-  if (!file || !file.type.startsWith("image/")) return;
-  setImage(URL.createObjectURL(file));
-  setResult(null); setError(null); setCalcResult(null); setAccuracyRating(null);
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      const maxSize = 1024;
-      let w = img.width, h = img.height;
-      if (w > maxSize || h > maxSize) {
-        if (w > h) { h = (h / w) * maxSize; w = maxSize; }
-        else { w = (w / h) * maxSize; h = maxSize; }
-      }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-      const compressed = canvas.toDataURL("image/jpeg", 0.8).split(",")[1];
-      setImageBase64(compressed);
+  const compressAndSetImage = useCallback((file) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const maxSize = 1024;
+        let w = img.width, h = img.height;
+        if (w > maxSize || h > maxSize) {
+          if (w > h) { h = (h / w) * maxSize; w = maxSize; }
+          else { w = (w / h) * maxSize; h = maxSize; }
+        }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+        const compressed = canvas.toDataURL("image/jpeg", 0.8).split(",")[1];
+        setImageBase64(compressed);
+      };
+      img.src = e.target.result;
     };
-    img.src = e.target.result;
-  };
-  reader.readAtoDataURL(file);
-}, []);
+    reader.readAsDataURL(file);
+  }, []);
+
+  const handleFile = useCallback((file) => {
+    if (!file || !file.type.startsWith("image/")) return;
+    setImage(URL.createObjectURL(file));
+    setResult(null); setError(null); setCalcResult(null); setAccuracyRating(null);
+    compressAndSetImage(file);
+  }, [compressAndSetImage]);
 
   const handleDrop = (e) => {
     e.preventDefault(); setHover(false);
@@ -161,7 +166,7 @@ export default function App() {
           messages: [{
             role: "user",
             content: [
-              { type: "image_url", image_url: { url: `data:image/png;base64,${imageBase64}` } },
+              { type: "image_url", image_url: { url: `data:image/jpeg;base64,${imageBase64}` } },
               { type: "text", text: prompt }
             ]
           }]
@@ -309,11 +314,11 @@ export default function App() {
                     : <>
                         <div style={{ fontSize:40, marginBottom:12, opacity:0.4 }}>👟</div>
                         <div style={{ color:SUBTEXT, fontSize:14, fontWeight:500 }}>Drop a sneaker photo</div>
-<div style={{ color:"#555", fontSize:12, marginTop:4 }}>or click to upload</div>
-<div style={{ color:"#444", fontSize:11, marginTop:8, textAlign:"center", padding:"0 20px" }}>💡 Best results with clean product photos on white background</div>
+                        <div style={{ color:"#555", fontSize:12, marginTop:4 }}>or click to upload</div>
+                        <div style={{ color:"#444", fontSize:11, marginTop:8, textAlign:"center", padding:"0 20px" }}>💡 Best results with clear photos of the shoe</div>
                       </>
                   }
-                  <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp" style={{ display:"none" }} onChange={(e) => handleFile(e.target.files[0])} />
+                  <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp,image/*" style={{ display:"none" }} onChange={(e) => handleFile(e.target.files[0])} />
                 </div>
 
                 {error && <div style={{ background:"#1a0d0d", border:"1px solid #ff444422", borderRadius:14, padding:"14px 16px", color:"#ff8888", fontSize:13 }}>⚠️ {error}</div>}
