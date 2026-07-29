@@ -120,7 +120,12 @@ export default function App() {
     setResult(null); setError(null); setCalcResult(null); setAccuracyRating(null);
     const reader = new FileReader();
     reader.onload = (e) => setImageBase64(e.target.result.split(",")[1]);
-    reader.readAsDataURL(file);
+if (file.type === "image/heic" || file.type === "image/heif" || file.name.toLowerCase().endsWith(".heic")) {
+  setError("Please use a JPEG or PNG photo. On iPhone go to Settings → Camera → Formats → Most Compatible.");
+  setLoading(false);
+  return;
+}
+reader.readAsDataURL(file);sDataURL(file);
   }, []);
 
   const handleDrop = (e) => {
@@ -296,7 +301,7 @@ export default function App() {
                         <div style={{ color:"#555", fontSize:12, marginTop:4 }}>or click to upload</div>
                       </>
                   }
-                  <input ref={inputRef} type="file" accept="image/*" style={{ display:"none" }} onChange={(e) => handleFile(e.target.files[0])} />
+                  <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp" style={{ display:"none" }} onChange={(e) => handleFile(e.target.files[0])} />
                 </div>
 
                 {error && <div style={{ background:"#1a0d0d", border:"1px solid #ff444422", borderRadius:14, padding:"14px 16px", color:"#ff8888", fontSize:13 }}>⚠️ {error}</div>}
