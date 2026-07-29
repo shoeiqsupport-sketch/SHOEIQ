@@ -114,19 +114,30 @@ export default function App() {
     if (tab === "drops" && drops.length === 0) fetchDrops();
   }, [tab, drops.length, fetchDrops]);
 
-  const handleFile = useCallback((file) => {
-    if (!file || !file.type.startsWith("image/")) return;
-    setImage(URL.createObjectURL(file));
-    setResult(null); setError(null); setCalcResult(null); setAccuracyRating(null);
-    const reader = new FileReader();
-    reader.onload = (e) => setImageBase64(e.target.result.split(",")[1]);
-if (file.type === "image/heic" || file.type === "image/heif" || file.name.toLowerCase().endsWith(".heic")) {
-  setError("Please use a JPEG or PNG photo. On iPhone go to Settings → Camera → Formats → Most Compatible.");
-  setLoading(false);
-  return;
-}
-reader.readAsDataURL(file);sDataURL(file);
-  }, []);
+ const handleFile = useCallback((file) => {
+  if (!file || !file.type.startsWith("image/")) return;
+  setImage(URL.createObjectURL(file));
+  setResult(null); setError(null); setCalcResult(null); setAccuracyRating(null);
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const maxSize = 1024;
+      let w = img.width, h = img.height;
+      if (w > maxSize || h > maxSize) {
+        if (w > h) { h = (h / w) * maxSize; w = maxSize; }
+        else { w = (w / h) * maxSize; h = maxSize; }
+      }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      const compressed = canvas.toDataURL("image/jpeg", 0.8).split(",")[1];
+      setImageBase64(compressed);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}, []);
 
   const handleDrop = (e) => {
     e.preventDefault(); setHover(false);
