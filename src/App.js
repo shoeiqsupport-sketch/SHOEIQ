@@ -298,7 +298,8 @@ reader.readAsDataURL(file);sDataURL(file);
                     : <>
                         <div style={{ fontSize:40, marginBottom:12, opacity:0.4 }}>👟</div>
                         <div style={{ color:SUBTEXT, fontSize:14, fontWeight:500 }}>Drop a sneaker photo</div>
-                        <div style={{ color:"#555", fontSize:12, marginTop:4 }}>or click to upload</div>
+<div style={{ color:"#555", fontSize:12, marginTop:4 }}>or click to upload</div>
+<div style={{ color:"#444", fontSize:11, marginTop:8, textAlign:"center", padding:"0 20px" }}>💡 Best results with clean product photos on white background</div>
                       </>
                   }
                   <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp" style={{ display:"none" }} onChange={(e) => handleFile(e.target.files[0])} />
