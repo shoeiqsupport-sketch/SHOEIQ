@@ -68,7 +68,11 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
-  const [watchlist, setWatchlist] = useState([]);
+  const [watchlist, setWatchlist] = useState(() => {
+  try {
+    return JSON.parse(localStorage.getItem("shoeiq_watchlist") || "[]");
+  } catch { return []; }
+});
   const [savedToast, setSavedToast] = useState(false);
   const [calcPrice, setCalcPrice] = useState("");
   const [calcSize, setCalcSize] = useState("");
@@ -206,6 +210,10 @@ export default function App() {
   };
 
   const removeFromWatchlist = (id) => setWatchlist(prev => prev.filter(i => i.id !== id));
+  useEffect(() => {
+  try { localStorage.setItem("shoeiq_watchlist", JSON.stringify(watchlist)); }
+  catch {}
+}, [watchlist]);
   const isInWatchlist = result && watchlist.some(i => i.name === result.name);
   const buyColor = result?.buy_recommendation === "Buy" ? ACCENT : result?.buy_recommendation === "Sell" ? "#ff5533" : ORANGE;
 
