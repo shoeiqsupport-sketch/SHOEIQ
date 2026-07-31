@@ -251,7 +251,7 @@ export default function App() {
               <div style={{ background:CARD, borderRadius:20, padding:"48px 24px", textAlign:"center", color:SUBTEXT }}>
                 <div style={{ fontSize:36, marginBottom:12 }}>👟</div>
                 <div style={{ fontWeight:600, marginBottom:6 }}>No sneakers saved yet</div>
-                <<div style={{ fontSize:13 }}>Scan a sneaker and save it to Watchlist</div>
+                <div style={{ fontSize:13 }}>Scan a sneaker and save it to Watchlist</div>
 <div style={{ fontSize:11, color:"#555", marginTop:8 }}>💡 Tip: Add ShoeIQ to your home screen to keep your watchlist saved</div>
               </div>
             ) : watchlist.map(item => <WatchlistCard key={item.id} item={item} onRemove={removeFromWatchlist} />)}
